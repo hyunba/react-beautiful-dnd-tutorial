@@ -6,10 +6,14 @@ export const minuteState = atom({
 });
 
 // selector에는 get 함수가 있다.
-export const hourSelector = selector({
+export const hourSelector = selector<number>({
     key: "hour",
     get: ({get}) => {
         const minutes = get(minuteState);
         return minutes / 60;
+    },
+    set: ({set}, newValue) => {
+        const minutes = Number(newValue) * 60;
+        set(minuteState, minutes);
     },
 });
