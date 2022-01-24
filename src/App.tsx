@@ -1,22 +1,28 @@
-import React from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { hourSelector, minuteState } from "./atoms";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd"
 
+// dragHandleProps는 해당 지정영역을 눌러야 이동할수있게함
+// dragableProps는 해당 영역의 내용들이 옮겨짐
 function App() {
-  const [minutes, setMinutes] = useRecoilState(minuteState)
-  const [hours, setHours] = useRecoilState(hourSelector)
-  const onMinutesChange = (event:React.FormEvent<HTMLInputElement>) => {
-    setMinutes(+event.currentTarget.value);
-  };
-  const onHoursChange = (event:React.FormEvent<HTMLInputElement>) => {
-    setHours(+event.currentTarget.value);
-  };
-  // +"1" -> 1 (현재 기본 값이 number인데 input에서 넘어오는 값은 string이다 하지만 +를 앞에 붙여주면 number가 된다)
+  const onDragEnd = () => {};
   return (
-    <div>
-      <input value={minutes} onChange={onMinutesChange} type="number" placeholder="Minutes" />
-      <input value={hours} onChange={onHoursChange} type="number" placeholder="Hours" />
-    </div>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div>
+        <Droppable droppableId="one">
+          {(element)=>
+            <ul ref={element.innerRef} {...element.droppableProps}>
+              <Draggable draggableId="first" index={0}>
+                {(element) => <li ref={element.innerRef} {...element.draggableProps}>
+                  <span {...element.dragHandleProps}>❤️</span>
+                  One</li>}
+              </Draggable>
+              <Draggable draggableId="second" index={1}>
+                {(element) => <li ref={element.innerRef} {...element.draggableProps} {...element.dragHandleProps}>Two</li>}
+              </Draggable>
+            </ul>
+          }
+        </Droppable>
+      </div>
+    </DragDropContext>
   );
 }
 
