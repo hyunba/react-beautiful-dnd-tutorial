@@ -2,6 +2,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautif
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "./atoms";
+import DragabbleCard from "./Components/DragabbleCard";
 
 const Wrapper = styled.div`
   display: flex;
@@ -61,11 +62,9 @@ function App() {
           <Droppable droppableId="one">
             {(element)=>
               <Board ref={element.innerRef} {...element.droppableProps}>
-                {toDos.map((toDo, index) => (<Draggable key={toDo} draggableId={toDo} index={index}>
-                  {(element) => (<Card ref={element.innerRef} {...element.draggableProps} {...element.dragHandleProps}>
-                    <span>❤️</span>
-                    {toDo}</Card>)}
-                </Draggable>))}
+                {toDos.map((toDo, index) => (
+                  <DragabbleCard key={toDo} toDo={toDo} index={index}></DragabbleCard>
+                ))}
                 {element.placeholder}
               </Board>
             }
