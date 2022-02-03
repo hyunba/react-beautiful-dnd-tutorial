@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "./atoms";
 import Board from "./Components/Board";
-import DragabbleCard from "./Components/DragabbleCard";
+
 
 const Wrapper = styled.div`
   display: flex;
@@ -44,18 +44,23 @@ const toDos = ["a", "b", "c", "d", "e", "f"];
 // atom의 값을 가져오려면 useRecoilValue를 사용하면되지만 atom의 값 뿐만 아니라 atom을 수정하는 함수까지 부르고 싶다면 useRecoilState를 사용.
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState)
-  const onDragEnd = ({draggableId, destination, source}:DropResult) => {
-    if (!destination) return;
+  const onDragEnd = (info: DropResult) => {
+    const { destination, draggableId, source } = info;
+    // same board movement
+    if(destination?.droppableId === source.droppableId){
+      setToDos((oldToDos) =>{
+      const boardCopy = [...oldToDos[source.droppableId]];
+      // 1) Delete item
+      boardCopy.splice(source.index, 1)
+      // 2) Put back item
+      boardCopy.splice(destination?.index, 0, draggableId)
 
-    // setToDos(oldToDos =>{
-    //   const copyToDos = [...oldToDos];
-    //   // 1) Delete item
-    //   copyToDos.splice(source.index, 1)
-    //   // 2) Put back item
-    //   copyToDos.splice(destination?.index, 0, draggableId)
-
-    //   return copyToDos;
-    // });
+      return {
+        ...oldToDos,
+        [source.droppableId]: boardCopy
+      };
+    });
+    }
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
