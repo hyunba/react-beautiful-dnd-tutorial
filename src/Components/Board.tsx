@@ -2,6 +2,11 @@ import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import DragabbleCard from "./DragabbleCard";
 
+interface IAreaProps{
+  isDraggingOver: boolean;
+  isDraggingFromThis: boolean;
+}
+
 const Wrapper = styled.div`
   width: 200px;
   padding: 20px 10px;
@@ -9,6 +14,14 @@ const Wrapper = styled.div`
   background-color: ${(props) => props.theme.boardColor};
   border-radius: 5px;
   min-height: 300px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Area = styled.div<IAreaProps>`
+  background-color: ${(props) => (props.isDraggingOver ? "pink" : props.isDraggingFromThis ? "black" : "blue")};
+  flex-grow: 1;
+  transition: background-color .3s ease-in-out;
 `;
 
 const Title = styled.h2`
@@ -28,13 +41,13 @@ function Board({toDos, boardId}: IBoardProps) {
       <Wrapper>
         <Title>{boardId}</Title>
           <Droppable droppableId={boardId}>
-              {(element)=>
-                <div ref={element.innerRef} {...element.droppableProps}>
+              {(element, snap)=>
+                <Area isDraggingFromThis={Boolean(snap.draggingFromThisWith)} isDraggingOver={snap.isDraggingOver} ref={element.innerRef} {...element.droppableProps}>
                   {toDos.map((toDo, index) => (
                     <DragabbleCard key={toDo} toDo={toDo} index={index}></DragabbleCard>
                   ))}
                   {element.placeholder}
-                </div>
+                </Area>
               }
           </Droppable>
       </Wrapper>
