@@ -51,29 +51,31 @@ function App() {
     if(destination?.droppableId === source.droppableId){
       setToDos((oldToDos) =>{
       const boardCopy = [...oldToDos[source.droppableId]];
+      const taskObj = boardCopy[source.index]
       // 1) Delete item
       boardCopy.splice(source.index, 1)
       // 2) Put back item
-      boardCopy.splice(destination?.index, 0, draggableId)
+      boardCopy.splice(destination?.index, 0, taskObj)
 
       return {
         ...oldToDos,
         [source.droppableId]: boardCopy
       };
-    });
+      });
     }
     if(destination.droppableId !== source.droppableId){
       setToDos((oldToDos) => {
         const sourceBoard = [...oldToDos[source.droppableId]];
+        const taskObj = sourceBoard[source.index]
         const destinationBoard = [...oldToDos[destination.droppableId]];
         sourceBoard.splice(source.index, 1);
-        destinationBoard.splice(destination.index, 0, draggableId);
+        destinationBoard.splice(destination.index, 0, taskObj);
         return {
           ...oldToDos,
           [source.droppableId]: sourceBoard,
           [destination.droppableId]: destinationBoard
         }
-      })
+      });
     }
   };
   return (

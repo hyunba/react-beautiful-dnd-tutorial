@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import DragabbleCard from "./DragabbleCard";
-import { IToDo } from "../atoms";
+import { IToDo, toDoState } from "../atoms";
+import { useSetRecoilState } from "recoil";
 
 const Wrapper = styled.div`
   width: 200px;
@@ -50,8 +51,19 @@ interface IForm {
 }
 
 function Board({toDos, boardId}: IBoardProps) {
+  const setToDos = useSetRecoilState(toDoState);
   const { register, setValue, handleSubmit } = useForm<IForm>();
-  const onValid = (data:IForm) => {
+  const onValid = ({ toDo }:IForm) => {
+    const newTodo = {
+      id: Date.now(),
+      text: toDo,
+    };
+    setToDos((allBoards) => {
+      return {
+        ...allBoards,
+        [boardId]: [newTodo, ...allBoards[boardId]]
+      };
+    });
     setValue("toDo", "");
   };
   return (
@@ -60,7 +72,6 @@ function Board({toDos, boardId}: IBoardProps) {
       <Form onSubmit={handleSubmit(onValid)}>
         <input {...register("toDo", { required: true })} type="text" placeholder={`Add task on ${boardId}`}/>
       </Form>
-      <button>click me</button>
         <Droppable droppableId={boardId}>
             {(element, snap)=>
               <Area isDraggingFromThis={Boolean(snap.draggingFromThisWith)} isDraggingOver={snap.isDraggingOver} ref={element.innerRef} {...element.droppableProps}>
